@@ -1,0 +1,57 @@
+{
+  "auth": {
+    "register": "Tidak ada akun, silahkan buat dulu",
+    "signup": "Daftar Akun Baru",
+    "login": "Masuk",
+    "username": "Nama Akun",
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Konfirmasi Password",
+    "readTerms": "Baca aturan dan kondisi",
+    "acceptTerms": "Terima aturan dan kondisi",
+    "error": {
+      "require": {
+        "username": "Nama Akun harus diisi",
+        "email": "Email harus diisi",
+        "password": "Password harus diisi",
+        "confirmPassword": "Konfirmasi Password Harus Diisi"
+      },
+      "min": {
+        "username": "Nama Akun setidaknya 5 karakter",
+        "password": "Password minimal memiliki panjang 8 karakter"
+      },
+      "max": {
+        "username": "Nama Akun tidak boleh lebih dari 100 karakter"
+      },
+      "passNotMatch": "Password tidak sama",
+      "accept": "Mohon untuk mensetujui aturan dan kondisi sebelum dapat melanjutkan proses selanjutnya",
+      "email": "Tolong isi dengan email yang benar"
+    }
+  },
+  "balance": {
+    "title": "Saldo Dompet",
+    "item": {
+      "topUp": "Permintaan untuk Top Up",
+      "transfer": "Transfer ke User Lain",
+      "bank": "Nama Bank Anda",
+      "selectBank": "Pilih salah satu Bank",
+      "userInfo": "Silahkan Isi Informasi Anda",
+      "sendInfo": "Silahkan Isi Informasi Penerima",
+      "user_agent": "Kirim Kepada",
+      "send_to_bank": "Dikirim ke Bank",
+      "selectSendBank": "Pilih salah satu Bank",
+      "balance_after": "Jumlah"
+    },
+    "error": {
+      "required": {
+        "user_agent": "Tolong tulis nama penerima",
+        "balance_after": "Jumlah uang perlu diisi"
+      },
+      "min": {
+        "bank": "Tolong pilih salah satu bank",
+        "send_to_bank": "Tolong pilih salah satu bank penerima",
+        "balance_after": "Anda perlu mengirim minimal 5"
+      }
+    }
+  }
+}
