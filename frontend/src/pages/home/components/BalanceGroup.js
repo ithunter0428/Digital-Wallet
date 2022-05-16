@@ -14,7 +14,7 @@ const BalanceComponent = ({ title, value, current }) => {
   return (
     <Box>
       <Typography sx={{ minWidth: 100, fontSize: "30px", textAlign: "center", marginTop: "30px", opacity: opacity }}>
-        {value} {currency.symbol}
+        {Math.abs(Number(value || 0).toFixed(8))} {currency.symbol}
       </Typography>
       <Typography sx={{ minWidth: 100, fontSize: "22px", textAlign: "center", marginTop: "10px", opacity: opacity }}>
         {title}
@@ -27,6 +27,7 @@ const BalanceGroupComponent = () => {
   const { currency, balance } = useSelector(
     accountSelector
   );
+  console.log(balance)
 
   return (
     <Grid container spacing={2}>

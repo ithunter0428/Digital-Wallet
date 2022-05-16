@@ -27,7 +27,6 @@ export default function BuyModal({ open, onClose, onAfterSend }) {
   const dispatch = useDispatch();
   const elements = useElements();
 	const [error, setError] = React.useState(null);
-  const [email, setEmail] = React.useState('');
   const [amount, setAmount] = React.useState(0);
 
   const { currency } = useSelector(
@@ -43,7 +42,6 @@ export default function BuyModal({ open, onClose, onAfterSend }) {
     });
 
     dispatch(addFunds({
-      email, 
       payment_method_id: paymentMethod.id, 
       currency: currency.name, 
       amount,
@@ -69,6 +67,7 @@ export default function BuyModal({ open, onClose, onAfterSend }) {
 			onClose={onClose}
 			aria-labelledby="modal-buy"
 			aria-describedby="modal-buy-description"
+      sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 9 }}
     >
       <Box sx={style}>
         <Stack
@@ -87,20 +86,6 @@ export default function BuyModal({ open, onClose, onAfterSend }) {
           <Typography id="modal-modal-title" variant="h6" component="h2" mb={2}>
             Funds {currency.name}
           </Typography>
-          <Box mb={3} sx={{ display: "flex", alignItems: "center" }}>
-            <Typography mr={2} sx={{ width: "80px" }}>
-              Email
-            </Typography>
-            <TextField
-              hiddenLabel 
-              id="email" 
-              name="email"    
-              type="email" 
-              sx={{ m: 1, width: '25ch' }}
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-          </Box>
           <Box mb={3} sx={{ display: "flex", alignItems: "center" }}>
             <CardElement id="card-element" class="card-element" onChange={handleChange} />
             <div className="card-errors" role="alert">{error}</div>

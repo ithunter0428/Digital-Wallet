@@ -74,7 +74,7 @@ function Home() {
         <Navbar onLogOut={onLogOut} onOpenChangeWallet={handleOpenChangeWallet} onCloseWallet={handleCloseWallet} />
       </nav>
       <Backdrop
-        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 10 }}
         open={isFetching}
       >
         <CircularProgress color="inherit" />

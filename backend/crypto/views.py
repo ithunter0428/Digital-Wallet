@@ -147,6 +147,13 @@ class GetLastTransactions(APIView):
                 except KeyError:
                     recipient = tx['amounts_received'][0]['recipient']
                     amount = tx['amounts_received'][0]['amount']
+                confirmed, currency = 0, request.data['currency']
+                if currency == 'bitcoin' and tx['confirmations'] >= 3:
+                    confirmed = 1
+                if currency == 'litecoin' and tx['confirmations'] >= 5:
+                    confirmed = 1
+                if currency == 'dogecoin' and tx['confirmations'] >= 10:
+                    confirmed = 1
                 response.append({
                     'id': tx['txid'],
                     'sender': tx['senders'][0],
@@ -154,7 +161,7 @@ class GetLastTransactions(APIView):
                     'amount': amount,
                     'time': tx['time'],
                     'fee': raw_tx['data']['network_fee'],
-                    'confirmed': tx['confirmations']
+                    'confirmed': confirmed
                 })
             
             response = {'data': response}

@@ -16,7 +16,14 @@ export const getCoinBalance = createAsyncThunk(
         const res = await api.post('/wallet/crypto/get_activities', formData);
         let activities = await res.data;
 
-        return { balance: data.data, activities: activities.data };
+        return { 
+          balance: {
+            address: data.data.address,
+            available_balance: data.data.available_balance,
+            cur_balance: data.data.pending_received_balance
+          }, 
+          activities: activities.data 
+        };
       } else {
         return thunkAPI.rejectWithValue(data);
       }
@@ -88,7 +95,6 @@ export const addFunds = createAsyncThunk(
       const formData = new FormData();
       formData.append("currency", currency);
       formData.append("amount", amount);
-      formData.append("email", email);
       formData.append("payment_method_id", payment_method_id);
 
       const response = await api.post('/wallet/fiat/topup', formData);
@@ -146,6 +152,7 @@ export const closeWallet = createAsyncThunk(
         return thunkAPI.rejectWithValue(data);
       }
     } catch (e) {
+      console.log(e.response.data)
       return thunkAPI.rejectWithValue({message: JSON.stringify(e.response.data)});
     }
   }
@@ -291,6 +298,45 @@ export const accountSlice = createSlice({
       state.isFetching = true;
     },
     [sendFiat.rejected]: (state, { payload }) => {
+      state.isFetching = false;
+      state.isError = true;
+      state.errorMessage = payload.message;
+    },
+    [closeWallet.fulfilled]: (state, { payload }) => {
+      console.log('payload', payload);
+      state.isFetching = false;
+      state.isSuccess = true;
+    },
+    [closeWallet.pending]: (state) => {
+      state.isFetching = true;
+    },
+    [closeWallet.rejected]: (state, { payload }) => {
+      state.isFetching = false;
+      state.isError = true;
+      state.errorMessage = payload.message;
+    },
+    [changeWallet.fulfilled]: (state, { payload }) => {
+      console.log('payload', payload);
+      state.isFetching = false;
+      state.isSuccess = true;
+    },
+    [changeWallet.pending]: (state) => {
+      state.isFetching = true;
+    },
+    [changeWallet.rejected]: (state, { payload }) => {
+      state.isFetching = false;
+      state.isError = true;
+      state.errorMessage = payload.message;
+    },
+    [getWallet.fulfilled]: (state, { payload }) => {
+      console.log('payload', payload);
+      state.isFetching = false;
+      state.isSuccess = true;
+    },
+    [getWallet.pending]: (state) => {
+      state.isFetching = true;
+    },
+    [getWallet.rejected]: (state, { payload }) => {
       state.isFetching = false;
       state.isError = true;
       state.errorMessage = payload.message;

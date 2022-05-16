@@ -26,9 +26,10 @@ export const loginUser = createAsyncThunk(
           return config;
         });
 
-        // const res_ = await api.post('/wallet/fiat/get_stripe_key', {});
-        // data = await response.data;
-        // console.log(data)
+        const response = await api.post('/wallet/fiat/get_stripe_key', {});
+        const res_ = await response.data;
+        localStorage.setItem('stripe_key', res_.data);
+
         return data;
       } else {
         return thunkAPI.rejectWithValue(data);

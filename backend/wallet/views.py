@@ -119,7 +119,8 @@ class CloseWallet(APIView):
                 total = 0
             else:
                 total = userbalances.aggregate(total = Sum(F('available_balance') + F('current_balance')))['total']
-            if total > 0:
+            print(total)
+            if total > 1e-8:
                 return Response("Wallet is not empty", status = status.HTTP_400_BAD_REQUEST, headers="")
 
             wallet.delete()
@@ -139,12 +140,15 @@ class CustomObtainAuthToken(ObtainAuthToken):
             closed = 1
         else:
             wallet_name = wallet.wallet_name
+        # user = get_userID(request.user.id)
+        # super_user = request.user.is_superuser
         return Response({
             'token': token.key, 
             'email': token.user.email,
             'username': token.user.username,
             'wallet_name': wallet_name,
             'wallet_closed': closed,
+            # 'super_user': super_user,
         })
 
 # user logout

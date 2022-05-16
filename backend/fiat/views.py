@@ -95,7 +95,8 @@ class TopUpFromStripe(APIView):
         # payment_method_id
         
         try:
-            currency, amount, email, payment_method_id = request.data['currency'], request.data['amount'], request.data['email'], request.data['payment_method_id']
+            currency, amount, payment_method_id = request.data['currency'], request.data['amount'], request.data['payment_method_id']
+            email = request.user.email
             amount = float(amount)
             fee = amount * 0.015 + 0.3
 
@@ -247,5 +248,5 @@ class GetWaitingActivities(APIView):
         return Response({'data': list})
 
 class GetStripeKey(APIView):
-    def post(self):
+    def post(self, request):
         return Response({'data': settings.STRIPE_PUBLISHABLE_KEY})

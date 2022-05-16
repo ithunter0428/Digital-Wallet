@@ -12,11 +12,10 @@ import {
   Routes,
   Route
 } from "react-router-dom";
-import {loadStripe} from "@stripe/stripe-js/pure";
+import { loadStripe } from "@stripe/stripe-js/pure";
 import { Elements } from '@stripe/react-stripe-js';
 
-const stripePromise = loadStripe('pk_test_51KzGpXD2gb65mjKccMPrTHG4ljdgdcYjpcMcxkSsZ7na9R89p05XU4I9sBDfHBMXoxecsWAC7bPHSVwLlCJoCQD200wjuPICjD');
-
+const stripePromise = loadStripe(localStorage.getItem('stripe_key'));
 
 function App() {
   return (
