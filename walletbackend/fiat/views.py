@@ -215,6 +215,8 @@ class GetActivities(APIView):
         
         userbalanceshistory = UserBalanceHistory.objects.all().filter(Q(sender = request.user.id, currency = request.data['currency']) | Q(recipient = request.user.id, currency = request.data['currency'])).order_by('-time')
         list = serialize_transactions(userbalanceshistory)
+        for ax in list:
+            ax['confirmed'] = int(ax['confirmed'])
         return Response({'data': list})
 
 # get transactions waiting for confirm
@@ -224,4 +226,6 @@ class GetWaitingActivities(APIView):
     def post(self, request):
         waiting_transactions = UserBalanceHistory.objects.all().filter(confirmed = False).order_by('-time')
         list = serialize_transactions(waiting_transactions)
+        for ax in list:
+            ax['confirmed'] = int(ax['confirmed'])
         return Response({'data': list})

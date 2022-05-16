@@ -1,4 +1,4 @@
-POST:  /register
+POST:  auth/register
 desc: register new user
 params:
     "username":   "test"
@@ -15,13 +15,14 @@ response:
 
 
 
-POST:  /auth
+POST:  auth/login
 desc: login
 params:
     "username": "test"
     "password": "testtest"
 response:
     "token": "8403b68589611fd0e2ec4da0f4262f3b8df289e5"
+    "email": "test@email.com"
 
 
 
@@ -58,7 +59,7 @@ desc:  transfer coin to another address
 params:
     "currency":   "bitcoin" ("litecoin", "dogecoin")
     "amount":     "0.0001"
-    "receiver":   "2NFcBmQfu2goPg9MD1ciFwBbmeb1dDcVn9o"
+    "recipient":   "2NFcBmQfu2goPg9MD1ciFwBbmeb1dDcVn9o"
 response:
     "status": "success",
     "data": {
@@ -73,58 +74,144 @@ desc:  get last activities
 params:
     "currency":   "bitcoin" ("litecoin", "dogecoin")
 response:
-    [
+    'data': [
         {
-            "txid": "b80f36aaf7bfda669de815ad61829f1c75db5e6cf8763f841d8b07a2d5615513",
-            "from_green_address": false,
-            "time": 1652605528,
-            "confirmations": 1,
-            "total_amount_sent": "0.00034120",
-            "amounts_sent": [
-                {
-                    "recipient": "QTH5vkPFkPrrEwgDQEGXK7fxSsQooLsALc",
-                    "amount": "0.00030000"
-                }
-            ],
-            "senders": [
-                "QecUwED924ieKagDgBtGr98JuuuH1W8bBN"
-            ],
-            "confidence": 1.0,
-            "propagated_by_nodes": null
-        },
-        {
-            "txid": "2a81cd65119d5ea4dbcf47cfff2c4ace56b0e7cd8b28687996cbff2f763bb88c",
-            "from_green_address": false,
-            "time": 1652604194,
-            "confirmations": 6,
-            "total_amount_sent": "0.00024120",
-            "amounts_sent": [
-                {
-                    "recipient": "QTH5vkPFkPrrEwgDQEGXK7fxSsQooLsALc",
-                    "amount": "0.00020000"
-                }
-            ],
-            "senders": [
-                "QecUwED924ieKagDgBtGr98JuuuH1W8bBN"
-            ],
-            "confidence": 1.0,
-            "propagated_by_nodes": null
-        },
-        {
-            "txid": "6fb57e05f26a175ab17a1316277ca16326f6f6bbf4f34f5ddbffbc697150d49e",
-            "from_green_address": false,
-            "time": 1652574606,
-            "confirmations": 104,
-            "amounts_received": [
-                {
-                    "recipient": "QecUwED924ieKagDgBtGr98JuuuH1W8bBN",
-                    "amount": "0.25000000"
-                }
-            ],
-            "senders": [
-                "QPyUK9hDT5hdDSYY2t2qSN1n71x9wNinDL"
-            ],
-            "confidence": 1.0,
-            "propagated_by_nodes": null
+            'id': '451bdd1b2d7eba94d9842ee34417ec00f878fb1ca0824f5c99b72e503f8fb755',
+            'sender': '2MzPzFr9cnGCTLr76zY4DpoY7uML3v5PR12',
+            'recipient': '2N8EPpXhwh1FT3XzJjTjdN3UoVZPpHRribB',
+            'amount': '1.00000000',
+            'time': 1652670075,
+            'fee': '0.00334000',
+            'confirmed': 31
+        }, {
+            'id': 'b9e72601a64ce02dab05eb508a334d39076a2a0cfd8ee915dc8676986a24f180',
+            'sender': '2MzPzFr9cnGCTLr76zY4DpoY7uML3v5PR12',
+            'recipient': '2N8EPpXhwh1FT3XzJjTjdN3UoVZPpHRribB',
+            'amount': '1.00000000',
+            'time': 1652669955,
+            'fee': '0.00334000',
+            'confirmed': 41
         }
     ]
+
+
+
+POST:  /wallet/fiat/get_balance
+desc:  get fiat balance
+params:
+    currency: 'USD' ('GBP', 'EUR')
+response:
+    'data': {
+        'id': 1, 
+        'currency': 'USD', 
+        'user': 1, 
+        'available_balance': 0.0, 
+        'current_balance': 0.0, 
+        'enabled': False, 
+        'closed': False
+    }
+
+POST:  /wallet/fiat/topup
+desc:  add new fund to wallet with stripe
+params:
+    currency: 'USD' ('GBP', 'EUR')
+    amount: 10
+    email: test@example
+    payment_method_id: 12312312
+response:
+    'data': {
+        'tx_id': 1
+    }
+
+POST:  /wallet/fiat/confirm_topup
+desc:  confirm topup transaction
+params:
+    transaction: 1
+response:
+    'data': 'success'
+
+POST:  /wallet/fiat/transfer
+desc:  trasnfer to another wallet
+params:
+    currency: 'USD' ('GBP', 'EUR')
+    amount: 10
+    recipient: test2
+response:
+    'data': {
+        'tx_id': 1
+    }
+
+POST:  /wallet/fiat/get_activities
+desc:  get wallet activities
+params:
+    currency: 'USD' ('GBP', 'EUR')
+response:
+    'data': [
+        {
+            'id': 6,
+            'currency': 'USD',
+            'sender': 'user2',
+            'recipient': 'user1',
+            'amount': 4.0,
+            'time': 1652658383,
+            'fee': 0.0,
+            'confirmed': 1
+        }, {
+            'id': 4,
+            'currency': 'USD',
+            'sender': 'user1',
+            'recipient': 'user2',
+            'amount': 3.0,
+            'time': 1652658382,
+            'fee': 0.0,
+            'confirmed': 1
+        }
+    ]
+
+POST:  /wallet/fiat/waiting_confirm
+desc:  get wallet activities
+params:
+response:
+    'data': [
+        {
+            'id': 6,
+            'currency': 'USD',
+            'sender': 'user2',
+            'recipient': 'user1',
+            'amount': 4.0,
+            'time': 1652658383,
+            'fee': 0.0,
+            'confirmed': 0
+        }, {
+            'id': 4,
+            'currency': 'USD',
+            'sender': 'user1',
+            'recipient': 'user2',
+            'amount': 3.0,
+            'time': 1652658382,
+            'fee': 0.0,
+            'confirmed': 0
+        }
+    ]
+
+POST:  /wallet/get_info
+desc:  get wallet name and closed info
+params:
+response:
+    'data': {
+        'name': "test's Wallet", 
+        'closed': 0
+    }
+
+POST:  /wallet/change_name
+desc:  change wallet name
+params:
+    name: abc
+response:
+    'data': 'success'
+
+POST:  /wallet/close
+desc:  close wallet
+params:
+response:
+    'data': 'success'
