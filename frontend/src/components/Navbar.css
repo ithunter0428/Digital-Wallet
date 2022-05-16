@@ -10,9 +10,9 @@
 .navbarContainer {
     display: flex;
     align-items: center; 
-    text-align: center;
+    text-align: center; 
     justify-content: space-between;
-    padding: 20px 200px;
+    padding: 20px 200px!important;
 }
 
 .logoTitle {
