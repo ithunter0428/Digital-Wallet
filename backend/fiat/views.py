@@ -147,6 +147,9 @@ class ConfirmTopUpTransaction(APIView):
             if transaction == NULL:
                 return Response('Invalid transaction', status = status.HTTP_400_BAD_REQUEST, headers="")
 
+            if transaction.confirmed == True:
+                return Response('Transaction is already confirmed', status = status.HTTP_400_BAD_REQUEST, headers="")
+
             # confirm transaction
             transaction.confirmed = True
             transaction.save()
