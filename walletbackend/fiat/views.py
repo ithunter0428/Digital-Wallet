@@ -2,6 +2,7 @@ from asyncio.windows_events import NULL
 from zoneinfo import available_timezones
 from django.http import HttpResponse
 from django.db.models import Avg, Count, Min, Sum, Q
+from django.conf import settings 
 # from django.contrib.gis.utils import GeoIP
 
 from rest_framework import viewsets, status, generics
@@ -22,6 +23,8 @@ from sentry_sdk import capture_exception
 import time
 import json
 import stripe
+
+stripe.api_key = settings.STRIPE_SECRET_KEY
 
 def get_balance(userid, currency):
     try:

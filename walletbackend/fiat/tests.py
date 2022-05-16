@@ -79,7 +79,8 @@ class TopupTests(APITestCase):
     def test_topup_less_5(self):
         data = {
             'currency': 'USD',
-            'stripe_secret_key': '',
+            'email': '',
+            'payment_method_id': '',
             'amount': 4,
         }
         response = self.client.post(self.topup_url, data, format='json')
@@ -88,7 +89,8 @@ class TopupTests(APITestCase):
     def test_topup_over_500(self):
         data = {
             'currency': 'USD',
-            'stripe_secret_key': '',
+            'email': '',
+            'payment_method_id': '',
             'amount': 501,
         }
         response = self.client.post(self.topup_url, data, format='json')
@@ -98,7 +100,8 @@ class TopupTests(APITestCase):
         transfer_amount = 10
         data = {
             'currency': 'USD',
-            'stripe_secret_key': '',
+            'email': '',
+            'payment_method_id': '',
             'amount': transfer_amount,
         }
         response = self.client.post(self.topup_url, data, format='json')
@@ -125,7 +128,8 @@ class ConfirmTopupTests(APITestCase):
         self.transfer_amount = 10
         data = {
             'currency': 'USD',
-            'stripe_secret_key': '',
+            'email': '',
+            'payment_method_id': '',
             'amount': self.transfer_amount,
         }
         self.client.post(self.topup_url, data, format='json')
@@ -167,7 +171,8 @@ class TrasferTests(APITestCase):
 
         data = {
             'currency': 'USD',
-            'stripe_secret_key': '',
+            'email': '',
+            'payment_method_id': '',
             'amount': 10,
         }
         self.transaction1 = self.client1.post(self.topup_url, data, format='json').data['data']
@@ -223,7 +228,8 @@ class TrasferTests(APITestCase):
         client2.credentials(HTTP_AUTHORIZATION='Token ' + token2.key)
         transaction2 = client2.post(self.topup_url, {
             'currency': 'USD',
-            'stripe_secret_key': '',
+            'email': '',
+            'payment_method_id': '',
             'amount': 20,
         }, format='json').data['data']
         client2.post(self.confirm_topup_url, {'transaction': transaction2['tx_id']}, format='json')
@@ -250,7 +256,8 @@ class TrasferTests(APITestCase):
         client2.credentials(HTTP_AUTHORIZATION='Token ' + token2.key)
         transaction2 = client2.post(self.topup_url, {
             'currency': 'USD',
-            'stripe_secret_key': '',
+            'email': '',
+            'payment_method_id': '',
             'amount': 20,
         }, format='json').data['data']
         client2.post(self.confirm_topup_url, {'transaction': transaction2['tx_id']}, format='json')
@@ -293,7 +300,8 @@ class GetActivitiesTest(APITestCase):
 
         data = {
             'currency': 'USD',
-            'stripe_secret_key': '',
+            'email': '',
+            'payment_method_id': '',
             'amount': 10,
         }
         self.transaction1 = self.client1.post(self.topup_url, data, format='json').data['data']
@@ -306,7 +314,8 @@ class GetActivitiesTest(APITestCase):
         self.client2.credentials(HTTP_AUTHORIZATION='Token ' + self.token2.key)
         transaction2 = self.client2.post(self.topup_url, {
             'currency': 'USD',
-            'stripe_secret_key': '',
+            'email': '',
+            'payment_method_id': '',
             'amount': 20,
         }, format='json').data['data']
         self.client2.post(self.confirm_topup_url, {'transaction': transaction2['tx_id']}, format='json')
@@ -366,7 +375,8 @@ class GetWaitingActivitiesTest(APITestCase):
     def getAfterTopup(self):
         data = {
             'currency': 'USD',
-            'stripe_secret_key': '',
+            'email': '',
+            'payment_method_id': '',
             'amount': 10,
         }
         self.transaction1 = self.client1.post(self.topup_url, data, format='json').data['data']

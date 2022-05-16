@@ -58,9 +58,12 @@ class SetApiKey(APIView):
                     'secret_pin': request.data['secret_pin']
                 }
             )
+            BlockIo(request.data['bitcoin'], request.data['secret_pin'], settings.API_VERSION).get_balance()
+            BlockIo(request.data['litecoin'], request.data['secret_pin'], settings.API_VERSION).get_balance()
+            BlockIo(request.data['dogecoin'], request.data['secret_pin'], settings.API_VERSION).get_balance()
         except Exception as e:
             capture_exception(e)
-            return Response({}, status=status.HTTP_400_BAD_REQUEST, headers="")
+            return Response('Invalid API Key', status=status.HTTP_400_BAD_REQUEST, headers="")
 
         response = {"data": "success"}
         return Response(response, status=status.HTTP_200_OK, headers="")
