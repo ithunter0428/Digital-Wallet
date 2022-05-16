@@ -134,8 +134,27 @@ class GetLastTransactions(APIView):
             sent = block_io.get_transactions(type='sent')['data']['txs']
             received = block_io.get_transactions(type='received')['data']['txs']
             tx_list = sorted(sent + received, key = lambda i: i['time'], reverse = True)
+            response = []
+
+            for tx in tx_list:
+                raw_tx = block_io.get_raw_transaction(txid = tx['txid'])
+                try:
+                    recipient = tx['amounts_sent'][0]['recipient']
+                    amount = tx['amounts_sent'][0]['amount']
+                except KeyError:
+                    recipient = tx['amounts_received'][0]['recipient']
+                    amount = tx['amounts_received'][0]['amount']
+                response.append({
+                    'id': tx['txid'],
+                    'sender': tx['senders'][0],
+                    'recipient': recipient,
+                    'amount': amount,
+                    'time': tx['time'],
+                    'fee': raw_tx['data']['network_fee'],
+                    'confirmed': tx['confirmations']
+                })
             
-            response = {'data': tx_list}
+            response = {'data': response}
             return Response(response, status=status.HTTP_200_OK, headers="")
         except Exception as e:
             capture_exception(e)

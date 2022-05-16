@@ -2,6 +2,7 @@ from rest_framework import serializers
 from django.contrib.auth.models import User
 from rest_framework.validators import UniqueValidator
 from django.contrib.auth.password_validation import validate_password
+from .models import Wallet
 
 from sentry_sdk import capture_exception
 
@@ -9,7 +10,6 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['id', 'username', 'first_name', 'last_name']
-        # extra_kwargs = {'password': {'write_only': True, 'required': True}}
 
 #Serializer to Register User
 class RegisterSerializer(serializers.ModelSerializer):
@@ -42,10 +42,18 @@ class RegisterSerializer(serializers.ModelSerializer):
             )
             user.set_password(validated_data['password'])
             user.save()
+
+            wallet = Wallet.objects.create(
+                user = user,
+                wallet_name = user.last_name + "'s Wallet"
+            )
+
             # user = authenticate(user_name=request.POST.get('user_name'), password=request.POST.get('password'))
             # login(request, user)
             # serializer = UserSerializer(user)
         except Exception as e:
             capture_exception(e)
+            return NULL
         return user
+
 

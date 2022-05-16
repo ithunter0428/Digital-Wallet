@@ -5,6 +5,7 @@ from rest_framework.test import APITestCase, APIClient
 from rest_framework.authtoken.models import Token
 from rest_framework import status
 from django.contrib.auth.models import User
+from wallet.models import Wallet
 from rest_framework.views import APIView
 from .views import GetBalance, TopUpFromStripe, ConfirmTopUpTransaction, TransferMoney, GetActivities, GetWaitingActivities
 
@@ -53,7 +54,8 @@ class GetBalanceTests(APITestCase):
         }
         response = self.client.post(self.get_balance_url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        print("=================get balance==", response.data)
+
+        # print("=================get balance==", response.data)
 
 class TopupTests(APITestCase):
     get_balance_url = reverse('fiat_get_balance')
@@ -105,7 +107,7 @@ class TopupTests(APITestCase):
         new_balance = self.client.post(self.get_balance_url, {'currency': 'USD'}, format='json').data['data']
         self.assertEqual(round(new_balance['current_balance'], 5), round(transfer_amount - transfer_amount * 0.015 - 0.3, 5))
 
-        print("=================topup==", response.data)
+        # print("=================topup==", response.data)
 
 class ConfirmTopupTests(APITestCase):
     get_balance_url = reverse('fiat_get_balance')
@@ -146,7 +148,7 @@ class ConfirmTopupTests(APITestCase):
         self.assertEqual(round(new_balance['available_balance'], 5), round(self.transfer_amount - self.transfer_amount * 0.015 - 0.3, 5))
         self.assertEqual(new_balance['current_balance'], 0)
 
-        print("=================confirm topup==", response.data)
+        # print("=================confirm topup==", response.data)
 
 class TrasferTests(APITestCase):
     get_balance_url = reverse('fiat_get_balance')
@@ -157,8 +159,8 @@ class TrasferTests(APITestCase):
     def setUp(self):
         User.objects.create_user(username='admin', password='admin')
 
-        self.user1 = User.objects.create_user(
-            username='user1', password='user1')
+        self.user1 = User.objects.create_user(username='user1', password='user1')
+        self.wallet1 = Wallet.objects.create(user=self.user1, wallet_name='AAA')
         self.token1 = Token.objects.create(user=self.user1)
         self.client1 = APIClient()
         self.client1.credentials(HTTP_AUTHORIZATION='Token ' + self.token1.key)
@@ -187,6 +189,7 @@ class TrasferTests(APITestCase):
 
     def test_sender_wallet_diabled(self):
         self.user2 = User.objects.create_user(username='user2', password='user2')
+        self.wallet2 = Wallet.objects.create(user=self.user2, wallet_name='BBB')
 
         data = {
             'currency': 'USD',
@@ -195,10 +198,11 @@ class TrasferTests(APITestCase):
         }
         response = self.client1.post(self.transfer_url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.data, "User's wallet is diabled")
+        self.assertEqual(response.data, "User's wallet is not active")
 
     def test_recipient_wallet_diabled(self):
         user2 = User.objects.create_user(username='user2', password='user2')
+        wallet2 = Wallet.objects.create(user=user2, wallet_name='BBB')
         self.client1.post(self.confirm_topup_url, {'transaction': self.transaction1['tx_id']}, format='json')
 
         data = {
@@ -208,10 +212,11 @@ class TrasferTests(APITestCase):
         }
         response = self.client1.post(self.transfer_url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.data, "Recipient's wallet is diabled")
+        self.assertEqual(response.data, "Recipient's wallet is not active")
 
     def test_wallet_over(self):
         user2 = User.objects.create_user(username='user2', password='user2')
+        wallet2 = Wallet.objects.create(user=user2, wallet_name='BBB')
         self.client1.post(self.confirm_topup_url, {'transaction': self.transaction1['tx_id']}, format='json')
         token2 = Token.objects.create(user=user2)
         client2 = APIClient()
@@ -238,6 +243,7 @@ class TrasferTests(APITestCase):
 
     def test_recipient_wallet_diabled(self):
         user2 = User.objects.create_user(username='user2', password='user2')
+        wallet2 = Wallet.objects.create(user=user2, wallet_name='BBB')
         self.client1.post(self.confirm_topup_url, {'transaction': self.transaction1['tx_id']}, format='json')
         token2 = Token.objects.create(user=user2)
         client2 = APIClient()
@@ -267,7 +273,7 @@ class TrasferTests(APITestCase):
         self.assertEqual(new_balance1['available_balance'], balance1['available_balance'] - transfer_amount)
         self.assertEqual(new_balance2['available_balance'], balance2['available_balance'] + transfer_amount)
 
-        print("=================transfer==", response.data)
+        # print("=================transfer==", response.data)
 
 class GetActivitiesTest(APITestCase):
     get_balance_url = reverse('fiat_get_balance')
@@ -335,7 +341,7 @@ class GetActivitiesTest(APITestCase):
         response = self.client1.post(self.get_activities_url, {'currency': 'USD'}, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-        print("=================get activities==", response.data)
+        # print("=================get activities==", response.data)
 
 class GetWaitingActivitiesTest(APITestCase):
     get_balance_url = reverse('fiat_get_balance')

@@ -14,7 +14,9 @@ from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.serializers import AuthTokenSerializer
 
 from django.contrib.auth.models import User
-from .models import CurrencyBalanceHistory, UserBalance, UserBalanceHistory
+from .models import UserBalance, UserBalanceHistory
+from wallet.models import Wallet
+
 from .serializers import UserBalanceSerializer, UserBalanceHistorySerializer
 from sentry_sdk import capture_exception
 import time
@@ -45,6 +47,12 @@ def get_transaction(id):
     try:
         return UserBalanceHistory.objects.get(id = id)
     except UserBalanceHistory.DoesNotExist:
+        return NULL
+
+def get_wallet(userid):
+    try:
+        return Wallet.objects.get(user = userid)
+    except Wallet.DoesNotExist:
         return NULL
 
 def serialize_transactions(objects):
@@ -158,13 +166,19 @@ class TransferMoney(APIView):
             if recipient == NULL:
                 return Response("Invalid recipient", status = status.HTTP_400_BAD_REQUEST, headers="")
 
+            sender_wallet, recipient_wallet = get_wallet(request.user.id), get_wallet(recipient.id)
+            if sender_wallet == NULL:
+                return Response("User's wallet is closed", status = status.HTTP_400_BAD_REQUEST, headers="")
+            if recipient_wallet == NULL:
+                return Response("Recipient's wallet is closed", status = status.HTTP_400_BAD_REQUEST, headers="")
+
             sender_balance, recipient_balance = get_balance(request.user.id, currency), get_balance(recipient.id, currency)
-            if sender_balance.enabled == False or sender_balance.closed == True:
-                return Response("User's wallet is diabled", status = status.HTTP_400_BAD_REQUEST, headers="")
+            if sender_balance.enabled == False:
+                return Response("User's wallet is not active", status = status.HTTP_400_BAD_REQUEST, headers="")
             if sender_balance.available_balance < amount:
                 return Response("Transfer amount is over balance", status = status.HTTP_400_BAD_REQUEST, headers="")
-            if recipient_balance.enabled == False or recipient_balance.closed == True:
-                return Response("Recipient's wallet is diabled", status = status.HTTP_400_BAD_REQUEST, headers="")
+            if recipient_balance.enabled == False:
+                return Response("Recipient's wallet is not active", status = status.HTTP_400_BAD_REQUEST, headers="")
 
             # save new transaction
             new_transaction = UserBalanceHistory(
@@ -201,7 +215,7 @@ class GetActivities(APIView):
         
         userbalanceshistory = UserBalanceHistory.objects.all().filter(Q(sender = request.user.id, currency = request.data['currency']) | Q(recipient = request.user.id, currency = request.data['currency'])).order_by('-time')
         list = serialize_transactions(userbalanceshistory)
-        return Response(list)
+        return Response({'data': list})
 
 # get transactions waiting for confirm
 class GetWaitingActivities(APIView):
@@ -210,4 +224,4 @@ class GetWaitingActivities(APIView):
     def post(self, request):
         waiting_transactions = UserBalanceHistory.objects.all().filter(confirmed = False).order_by('-time')
         list = serialize_transactions(waiting_transactions)
-        return Response(list)
+        return Response({'data': list})

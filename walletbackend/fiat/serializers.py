@@ -20,7 +20,7 @@ from sentry_sdk import capture_exception
 class UserBalanceSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserBalance
-        fields = ['id', 'currency', 'user', 'available_balance', 'current_balance', 'enabled', 'closed']
+        fields = ['id', 'currency', 'user', 'available_balance', 'current_balance', 'enabled']
         read_only_fields = ['id']
 
 # class BankBalanceHistorySerializer(serializers.ModelSerializer):
