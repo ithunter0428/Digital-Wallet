@@ -91,7 +91,6 @@ class TopUpFromStripe(APIView):
     def post(self, request):
         # currency
         # amount
-        # email
         # payment_method_id
         
         try:
