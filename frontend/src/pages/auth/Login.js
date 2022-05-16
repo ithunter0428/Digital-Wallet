@@ -60,7 +60,7 @@ function Login() {
         />
         <Typography component="h4" variant="h4" sx={{ marginTop: "20px", fontWeight: 700 }}>Welcome Back!</Typography>
         <Typography sx={{ marginTop: "10px"}}>
-          The decentralized web awaits
+          {/* The decentralized web awaits */}
         </Typography>
         <Stack
           component="form"
@@ -104,7 +104,7 @@ function Login() {
             />}
           />  
           <Button variant="contained" size="large" type="submit" sx={{ width: "290px", padding: "20px", borderRadius: "50px"}}>
-            {isFetching ? '...Waiting': 'Unlock'}
+            {isFetching ? '...Waiting': 'Sign In'}
           </Button>
           <Link href="/register">Create account</Link>
         </Stack>

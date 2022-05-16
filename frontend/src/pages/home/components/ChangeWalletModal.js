@@ -42,7 +42,7 @@ export default function ChangeWalletModal({ open, onClose }) {
     >
       <Box sx={style}>
         <Typography id="modal-modal-title" variant="h6" component="h2" mb={2}>
-          Change Wallet
+          Change Wallet Name
         </Typography>
         <TextField
           hiddenLabel 
@@ -52,7 +52,7 @@ export default function ChangeWalletModal({ open, onClose }) {
           value={name}
         />
         <Button onClick={handleSubmit} variant="contained" size="large" sx={{ width: "170px", padding: "10px", borderRadius: "50px"}}>
-          Change Wallet
+          Change Name
         </Button>
       </Box>
     </Modal>

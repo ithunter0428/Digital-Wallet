@@ -108,10 +108,10 @@ function Navbar({ onLogOut, onOpenChangeWallet, onCloseWallet }) {
         >
           <MenuItem onClick={onOpenChangeWallet}>
             <Avatar><AccountBalanceWalletIcon /></Avatar>
-             Change Wallet
+             Change Wallet Name
           </MenuItem>
           <MenuItem onClick={onCloseWallet}>
-            <Avatar /> Close Account
+            <Avatar /> Close Wallet
           </MenuItem>
           <Divider />
           <MenuItem onClick={onLogOut}>

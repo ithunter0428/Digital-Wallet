@@ -1,23 +1,79 @@
-# Digital-Wallet (Django + React.js)
-Crypto Wallet + Fiat Wallet
+# GenioPay Wallet
+#### _Minimalistic Version_
 
-People to be able to hold crypto and Fiat in their Digital Wallet. (Hybrid)
-What is a Digital Wallet?- A digital wallet willallow Jake to hold both Fiat and Cryptocurrencies for spending)
-Crypto Wallet currencies include BTC, LITECOIN and DOGECOIN Fiat Wallet currencies include  USD, GBP and EUR
+GenioPay Wallet is a wallet which holds both of fiat and crypto wallet.
 
-**Wallet Operations** 
-1. Adding Funds: Jake can add funds to his Fiat Wallet by PayPal or Credit or Debit Card 
-2. 2. Manage Wallet: Jake can set a friendly name or display the name of the Wallet and can also close the wallet. 
-  It is important to note that you cannot close a Wallet when there is a balance 
-3. A closed Wallet cannot receive funds
-Wallet Attributes: 
-● Available balance and Current balance
-● A newly created Wallet is not active until the customer has funded the wallet with $5
+- Fiat Wallet Currencies: USD, GBP, EUR
+- Crypto Wallet Currencies: Bitcoin, Litecoin, Dogecoin
 
-**IMPLEMENTATION**
-For the Crypto Wallet - Use useBlock.io 
-Basic -https://block.io/docs/basic 
-Real-time Notiﬁcation -https://block.io/docs/notiﬁcations/python
+## Features
 
-**Payment Gateway**
-We will allow our customers add funds to their Wallet by Debit Cards. Payment will be processed by Stripe
+- Add fiat fund to wallet by Debit Cards. Payment is processed by Stripe.
+- Crypto wallet uses Block.io.
+
+## Frameworks
+ - Front-end: React/Javascript
+ - Back-end: Django/Python
+
+## Database
+Django used Sqlite for its database.
+To delete database completely, delete `backend/db.sqlite3`.
+How to build new database:
+```sh
+python manage.py migrate
+```
+Create super user:
+```sh
+python manage.py createsuperuser
+```
+## Run backend
+In `backend` directory, run command:
+```sh
+python manage.py runserver
+```
+Default port num is `8000`
+## Run frontend
+In `frontend` direnctory, run command:
+```sh
+npm start
+```
+Default port num is `3000`
+## How to use wallet
+Go to http://localhost:3000/login
+#### Create new wallet
+ - Input user name and password and other info
+ - Input your Block.io API Key and Secret Pin for your crypto wallet
+#### Wallet display info
+ - Balance
+-- `Available balance` is amount that user can manage or transfer
+-- `Pending received balance` is amount that is made but not confirmed amount
+ - Activities
+   Show recent transactions of current currency
+#### Add fund to fiat wallet
+ - Click `Funds`
+ - Input debit card info and amount to add
+ - Amount must be >= 5, <= 500
+ - Wait for transaction to be confirmed
+#### Confirm add-fund transaction in admin
+ - Go to http://localhost:3000/admin
+ - Click one transaction in the table to confirm
+#### Transfer fund in fiat wallet
+ - Click `Transfer`
+ - Input recipient username and amount to transfer
+ - Transfer transaction is confirmed immediately
+#### Transfer fund in crypto wallet
+ - Input recipient address and amount to transfer
+ - Wait for trasaction to be confirmed in blockchain network
+#### Change wallet name
+ - Click right-top-corner button
+ - Click `Change Wallet Name`
+ - Input new name
+### Close wallet
+ - Empty fiat fund is needed to close wallet
+ - Click right-top-corner button and click `Close Wallet`
+## Test backend
+```sh
+python manage.py test wallet.tests
+python manage.py test crypto.tests
+python manage.py test fiat.tests
+```

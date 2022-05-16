@@ -199,7 +199,7 @@ function Register() {
           <Button type="submit" variant="contained" size="large" sx={{ width: "290px", padding: "20px", borderRadius: "50px"}}>
             {isFetching ? '...Waiting': 'Create Account'}
           </Button>
-          <Link href="/login">Unlock</Link>
+          <Link href="/login">Sign In</Link>
         </Stack>
       </Box>
     </React.Fragment>

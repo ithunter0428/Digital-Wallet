@@ -35,7 +35,7 @@ const BalanceGroupComponent = () => {
         <BalanceComponent title={"Available Balance"} value={balance.available_balance} />
       </Grid>
       <Grid item xs={6}>
-        <BalanceComponent title={currency.type == "coin"? "Pending Received Balance": "Current Balance"} value={balance.cur_balance} current/>
+        <BalanceComponent title={currency.type == "coin"? "Pending Received Balance": "Pending Received Balance"} value={balance.cur_balance} current/>
       </Grid>
     </Grid>
   );
