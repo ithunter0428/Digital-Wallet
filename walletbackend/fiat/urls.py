@@ -1,5 +1,5 @@
 from django.urls import path, include
-from .views import GetBalance, TopUpFromStripe, ConfirmTopUpTransaction, TransferMoney, GetActivities, GetWaitingActivities
+from .views import GetBalance, TopUpFromStripe, ConfirmTopUpTransaction, TransferMoney, GetActivities, GetWaitingActivities, GetStripeKey
 
 urlpatterns = [
     path('get_balance', GetBalance.as_view(), name = 'fiat_get_balance'),
@@ -7,5 +7,6 @@ urlpatterns = [
     path('waiting_confirm', GetWaitingActivities.as_view(), name = 'fiat_waiting_confirm'),
     path('confirm_topup', ConfirmTopUpTransaction.as_view(), name = 'fiat_confirm_topup'),
     path('transfer', TransferMoney.as_view(), name = 'fiat_transfer'),
-    path('get_activities', GetActivities.as_view(), name = 'fiat_get_activities')
+    path('get_activities', GetActivities.as_view(), name = 'fiat_get_activities'),
+    path('get_stripe_key', GetStripeKey.as_view(), name = 'fiat_get_stripe_key')
 ]

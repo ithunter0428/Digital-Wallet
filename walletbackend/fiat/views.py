@@ -17,6 +17,7 @@ from rest_framework.authtoken.serializers import AuthTokenSerializer
 from django.contrib.auth.models import User
 from .models import UserBalance, UserBalanceHistory
 from wallet.models import Wallet
+from threading import Lock
 
 from .serializers import UserBalanceSerializer, UserBalanceHistorySerializer
 from sentry_sdk import capture_exception
@@ -26,14 +27,15 @@ import stripe
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
+lock = Lock()
 def get_balance(userid, currency):
+    lock.acquire()
     try:
-        userbalance = UserBalance.objects.get(user=userid)
-        return userbalance
+        userbalance = UserBalance.objects.get(user=userid, currency=currency)
     except UserBalance.DoesNotExist:
-        balance = UserBalance.objects.create(user=get_user_by_id(userid), currency=currency)
-        return balance
-
+        userbalance = UserBalance.objects.create(user=get_user_by_id(userid), currency=currency)
+    lock.release()
+    return userbalance
 
 def get_user_by_id(userid):
     try:
@@ -241,3 +243,7 @@ class GetWaitingActivities(APIView):
         for ax in list:
             ax['confirmed'] = int(ax['confirmed'])
         return Response({'data': list})
+
+class GetStripeKey(APIView):
+    def post(self):
+        return Response({'data': settings.STRIPE_PUBLISHABLE_KEY})
