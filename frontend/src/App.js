@@ -1,33 +1,53 @@
-import React, { Component } from "react";
-import { Route, Redirect } from "react-router-dom";
-import { Provider } from "react-redux";
-import store from "./store";
 
-import LogIn from "./components/auth/login";
-
-import Balance from "./components/geninfo/balance";
-
-import {Elements} from '@stripe/react-stripe-js';
+import './App.css';
+import * as React from 'react';
+import { Outlet } from "react-router-dom";
+import Home from './pages/home/Home';
+import Admin from './pages/admin/Admin';
+import Login from './pages/auth/Login';
+import Register from './pages/auth/Register';
+import { PrivateRoute } from './helpers/PrivateRoute';
+import {
+  BrowserRouter,
+  Routes,
+  Route
+} from "react-router-dom";
 import {loadStripe} from "@stripe/stripe-js/pure";
-import CheckoutForm from "./components/CheckoutForm";
+import { Elements } from '@stripe/react-stripe-js';
 
-const stripePromise = loadStripe('pk_test_51Kz7q2GskKmf1K7OjTLGeLXAlH2A4g5DeD2VTkbQfm3oz8uMmBTDFCMXmeV0rPwgUXKEluhFDv6IgRuvdY6BdDp200cUsFOTpf');
+const stripePromise = loadStripe('pk_test_51KzGpXD2gb65mjKccMPrTHG4ljdgdcYjpcMcxkSsZ7na9R89p05XU4I9sBDfHBMXoxecsWAC7bPHSVwLlCJoCQD200wjuPICjD');
 
-class App extends Component {
-  render() {
-    return (
-      <Provider store={store}>
-        <div>
-          <Route exact path="/login" component={LogIn} />
-          <Route exact path="/" render={() => <Redirect to="/balance" />} />
-          <Route exact path="/balance" component={Balance} />
-        </div>
-        <Elements stripe={stripePromise}>
-          <CheckoutForm />
-        </Elements>
-      </Provider>
-    );
-  }
+
+function App() {
+  return (
+    <div className="App">
+      <Outlet />
+      <BrowserRouter>
+        <Routes>
+          <Route path="login" element={<Login />} />
+          <Route path="register" element={<Register />} />
+          <Route
+            path="/"
+            element={
+              <PrivateRoute>
+                <Elements stripe={stripePromise}>
+                  <Home />
+                </Elements>
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/admin"
+            element={
+              <PrivateRoute>
+                <Admin />
+              </PrivateRoute>
+            }
+          />
+        </Routes>
+      </BrowserRouter>
+    </div>
+  );
 }
 
 export default App;

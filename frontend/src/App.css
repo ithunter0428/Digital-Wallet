@@ -1,0 +1,12 @@
+html {
+  margin: 0!important;
+  padding: 0!important;
+}
+
+.navbar {
+  background-color: #f2f4f6;
+}
+
+h1, h2, h3, h4, h5 {
+  color: rgb(77, 77, 77);
+}

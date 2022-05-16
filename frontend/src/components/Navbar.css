@@ -1,0 +1,8 @@
+.color-indicator__inner-circle {
+    border-radius: 12px;
+    height: 12px;
+    width: 12px;
+    color: yellow;
+    background-color: yellow;
+    margin-right: 10px;
+}

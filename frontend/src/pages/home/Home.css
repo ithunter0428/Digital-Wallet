@@ -1,0 +1,8 @@
+.copyboard_bar, .actions_bar {
+    padding: 20px;
+    border-bottom: solid 1px grey;
+}
+
+#card-element {
+    width: 400px!important;
+}

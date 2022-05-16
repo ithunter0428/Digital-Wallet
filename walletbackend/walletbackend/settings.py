@@ -41,7 +41,8 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'corsheaders',
     'wallet',
-    'payments.apps.PaymentsConfig'
+    'crypto',
+    'fiat'
 ]
 
 MIDDLEWARE = [
@@ -132,3 +133,5 @@ STATIC_URL = '/static/'
 
 STRIPE_PUBLISHABLE_KEY = 'pk_test_51Kz7q2GskKmf1K7OjTLGeLXAlH2A4g5DeD2VTkbQfm3oz8uMmBTDFCMXmeV0rPwgUXKEluhFDv6IgRuvdY6BdDp200cUsFOTpf'
 STRIPE_SECRET_KEY = 'sk_test_51Kz7q2GskKmf1K7OlSl1g4FzpBZE0O4allVgSzgHTCoWCFyRyNeOfagIMMvuB72CpARRsrGIqsicLh8OngGOJpSL00FnWbJznR'
+
+API_VERSION = 2

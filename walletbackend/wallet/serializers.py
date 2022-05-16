@@ -1,57 +1,51 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from .models import TypeActivity, Bank, BankBalance, BankBalanceHistory, UserBalance, UserBalanceHistory
+from rest_framework.validators import UniqueValidator
+from django.contrib.auth.password_validation import validate_password
+
+from sentry_sdk import capture_exception
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'username', 'password']
-        extra_kwargs = {'password': {'write_only': True, 'required': True}}
+        fields = ['id', 'username', 'first_name', 'last_name']
+        # extra_kwargs = {'password': {'write_only': True, 'required': True}}
 
-class TypeActivitySerializer(serializers.ModelSerializer):
+#Serializer to Register User
+class RegisterSerializer(serializers.ModelSerializer):
+    email = serializers.EmailField(
+      required=True,
+      validators=[UniqueValidator(queryset=User.objects.all())]
+    )
+    password = serializers.CharField(
+      write_only=True, required=True, validators=[validate_password])
+    password2 = serializers.CharField(write_only=True, required=True)
     class Meta:
-        model = TypeActivity
-        fields = ['id', 'title']
-        read_only_fields = ['id']
-
-class BankSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Bank
-        fields = ['id', 'code']
-        read_only_fields = ['id']
-
-class BankBalanceSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = BankBalance
-        fields = ['id', 'bank', 'balance', 'balance_achieve', 'enable']
-        read_only_fields = ['id']
-
-class BankBalanceHistorySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = BankBalanceHistory
-        fields = ['id', 'bank_balance', 'balance_before', 'balance_after', 'activity', 'typeActivity', 'ip', 'location', 'user_agent', 'author']
-        read_only_fields = ['id']
-
-class UserBalanceHistorySerializer(serializers.ModelSerializer):
-    user = serializers.SerializerMethodField()
-    bank = serializers.SerializerMethodField()
-    class Meta:
-        model = UserBalanceHistory
-        fields = ['id', 'user', 'bank', 'user_balance', 'balance_before', 'balance_after', 'activity', 'typeActivity', 'ip', 'location', 'user_agent', 'author', 'send_to','send_to_bank', 'çonfirm']
-        read_only_fields = ['id']
-        write_only_fields=['user', 'bank']
-        
-class UserBalanceSerializer(serializers.ModelSerializer):
-    # total_balance = serializers.SerializerMethodField()
-    histories = UserBalanceHistorySerializer(many=True, read_only=True)
-    bank_name = serializers.CharField(
-        source='bank.code', read_only=True)
-    class Meta:
-        model = UserBalance
-        fields = ['id', 'bank','bank_name', 'user', 'balance', 'balance_achieve', 'histories']
-        read_only_fields = ['id','histories', 'bank_name']
-    
-    # def get_total_balance(self, obj):
-    #     totalbalance = UserBalance.objects.all().filter(user=request.data['userid']).aggregate(total_price=Sum('per_piece_price'))
-    #     return totalbalance["total_balance"]
+        model = User
+        fields = ('username', 'password', 'password2', 'email', 'first_name', 'last_name')
+        extra_kwargs = {
+            'first_name': {'required': True},
+            'last_name': {'required': True}
+        }
+    def validate(self, attrs):
+        if attrs['password'] != attrs['password2']:
+            raise serializers.ValidationError(
+                {"password": "Password fields didn't match."})
+        return attrs
+    def create(self, validated_data):
+        try:
+            user = User.objects.create(
+                username=validated_data['username'],
+                email=validated_data['email'],
+                first_name=validated_data['first_name'],
+                last_name=validated_data['last_name']
+            )
+            user.set_password(validated_data['password'])
+            user.save()
+            # user = authenticate(user_name=request.POST.get('user_name'), password=request.POST.get('password'))
+            # login(request, user)
+            # serializer = UserSerializer(user)
+        except Exception as e:
+            capture_exception(e)
+        return user
 

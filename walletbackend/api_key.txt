@@ -1,0 +1,8 @@
+Litecoin (TESTNET!)	fcef-6b9e-ee96-c65d
+Bitcoin (TESTNET!)	3101-2c1a-b061-b20b
+Dogecoin (TESTNET!)	122d-474b-b4e3-c49c
+
+
+Litecoin (TESTNET!)	c4a0-e551-f12c-99c1
+Bitcoin (TESTNET!)	20d5-05aa-2c7d-01ff
+Dogecoin (TESTNET!)	aea7-f29b-af25-996c

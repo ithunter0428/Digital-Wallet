@@ -1,0 +1,130 @@
+POST:  /register
+desc: register new user
+params:
+    "username":   "test"
+    "email":      "test@example.com"
+    "first_name": "test"
+    "last_name":  "test"
+    "password":   "testtest"
+    "password2":  "testest"
+response:
+    "username": "test2",
+    "email": "test2@email.com",
+    "first_name": "test",
+    "last_name": "2"
+
+
+
+POST:  /auth
+desc: login
+params:
+    "username": "test"
+    "password": "testtest"
+response:
+    "token": "8403b68589611fd0e2ec4da0f4262f3b8df289e5"
+
+
+
+POST:  /wallet/crypto/set_api_key
+desc: set API key and secret PIN of cryto wallet
+params:
+    "bitcoin":    "3101-2c1a-b061-b20b"
+    "litecoin":   "fcef-6b9e-ee96-c65d"
+    "dogecoin":   "122d-474b-b4e3-c49c"
+    "secret_pin": "snape1112snape111"
+response:
+    "data": "success"
+
+
+
+POST:  /wallet/crypto/get_balance
+desc: get crypto wallet get_balance
+params:
+    "currency":   "bitcoin" ("litecoin", "dogecoin")
+resonse:
+    "data": {
+        "network": "LTCTEST",
+        "user_id": 0,
+        "address": "QecUwED924ieKagDgBtGr98JuuuH1W8bBN",
+        "label": "default",
+        "available_balance": "0.25000000",
+        "pending_received_balance": "0.00000000"
+    }
+
+
+
+POST:  /wallet/crypto/transfer
+desc:  transfer coin to another address
+params:
+    "currency":   "bitcoin" ("litecoin", "dogecoin")
+    "amount":     "0.0001"
+    "receiver":   "2NFcBmQfu2goPg9MD1ciFwBbmeb1dDcVn9o"
+response:
+    "status": "success",
+    "data": {
+        "network": "LTCTEST",
+        "txid": "2a81cd65119d5ea4dbcf47cfff2c4ace56b0e7cd8b28687996cbff2f763bb88c"
+    }
+
+
+
+POST:  /wallet/crypto/get_activities
+desc:  get last activities
+params:
+    "currency":   "bitcoin" ("litecoin", "dogecoin")
+response:
+    [
+        {
+            "txid": "b80f36aaf7bfda669de815ad61829f1c75db5e6cf8763f841d8b07a2d5615513",
+            "from_green_address": false,
+            "time": 1652605528,
+            "confirmations": 1,
+            "total_amount_sent": "0.00034120",
+            "amounts_sent": [
+                {
+                    "recipient": "QTH5vkPFkPrrEwgDQEGXK7fxSsQooLsALc",
+                    "amount": "0.00030000"
+                }
+            ],
+            "senders": [
+                "QecUwED924ieKagDgBtGr98JuuuH1W8bBN"
+            ],
+            "confidence": 1.0,
+            "propagated_by_nodes": null
+        },
+        {
+            "txid": "2a81cd65119d5ea4dbcf47cfff2c4ace56b0e7cd8b28687996cbff2f763bb88c",
+            "from_green_address": false,
+            "time": 1652604194,
+            "confirmations": 6,
+            "total_amount_sent": "0.00024120",
+            "amounts_sent": [
+                {
+                    "recipient": "QTH5vkPFkPrrEwgDQEGXK7fxSsQooLsALc",
+                    "amount": "0.00020000"
+                }
+            ],
+            "senders": [
+                "QecUwED924ieKagDgBtGr98JuuuH1W8bBN"
+            ],
+            "confidence": 1.0,
+            "propagated_by_nodes": null
+        },
+        {
+            "txid": "6fb57e05f26a175ab17a1316277ca16326f6f6bbf4f34f5ddbffbc697150d49e",
+            "from_green_address": false,
+            "time": 1652574606,
+            "confirmations": 104,
+            "amounts_received": [
+                {
+                    "recipient": "QecUwED924ieKagDgBtGr98JuuuH1W8bBN",
+                    "amount": "0.25000000"
+                }
+            ],
+            "senders": [
+                "QPyUK9hDT5hdDSYY2t2qSN1n71x9wNinDL"
+            ],
+            "confidence": 1.0,
+            "propagated_by_nodes": null
+        }
+    ]
