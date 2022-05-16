@@ -10,12 +10,12 @@ export const loginUser = createAsyncThunk(
       uploadData.append("username", email);
       uploadData.append("password", password);
 
-      const response = await api.post('auth/', uploadData);
+      const response = await api.post('/auth/login', uploadData);
 
       let data = await response.data;
       if (response.status === 200) {
         await localStorage.setItem('token', data.token);
-        api.defaults.headers.common['Authorization'] = `Token ${data.token}` 
+        // api.defaults.headers.common['Authorization'] = `Token ${data.token}` 
 
         return { email };
       } else {
@@ -39,10 +39,10 @@ export const signupUser = createAsyncThunk(
       uploadData.append("first_name", firstname);
       uploadData.append("last_name", lastname);
     
-      let response = await api.post('/register', uploadData);
+      let response = await api.post('/auth/register', uploadData);
       const user = await response.data;
       if (response.status === 200 || response.status === 201) {
-        const response = await api.post('auth/', uploadData);
+        const response = await api.post('/auth/login', uploadData);
 
         let data = await response.data;
         if (response.status === 200) {

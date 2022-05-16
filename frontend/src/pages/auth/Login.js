@@ -56,7 +56,7 @@ function Login() {
             maxWidth: { xs: 120, md: 90 },
           }}
           alt="MyWallet"
-          src="img/metamask.svg"
+          src="img/logo.webp"
         />
         <Typography component="h4" variant="h4" sx={{ marginTop: "20px", fontWeight: 700 }}>Welcome Back!</Typography>
         <Typography sx={{ marginTop: "10px"}}>

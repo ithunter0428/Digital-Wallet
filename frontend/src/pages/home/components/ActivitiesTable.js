@@ -79,19 +79,19 @@ function timeConverter(UNIX_timestamp){
 export default function ActivitiesTable() {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
-  const { currency, activities } = useSelector(
+  const { balance, activities } = useSelector(
     accountSelector
   );
 
   const rows = (activities || []).map(row => {
-    const direction = row.amounts_sent? "sent": "received";
-    const received = row.amounts_sent? row.amounts_sent[0]: row.amounts_received[0];
+    const direction = row.sender == balance.address? "sent": "received";
     return {
-      confirmed: currency.type == "coin"? true: row.confirmed,
+      id: row.id,
+      confirmed: row.confirmed > 0,
       time: timeConverter(row.time),
-      sender: row.senders[0],
-      receiver: received.recipient,
-      amount: received.amount ,
+      sender: row.sender,
+      receiver: row.recipient,
+      amount: row.amount ,
       direction: direction,
       fee: row.fee || 0
     }
@@ -111,12 +111,12 @@ export default function ActivitiesTable() {
       <TableContainer sx={{ maxHeight: 440 }}>
         <Table stickyHeader aria-label="sticky table">
           <TableHead>
-            <TableRow key={0}>
+            <TableRow>
               <TableCell align="center" colSpan={7}>
                 Activities
               </TableCell>
             </TableRow>
-            <TableRow key={1}>
+            <TableRow>
               {columns.map((column) => (
                 <TableCell
                   key={column.id}
@@ -133,7 +133,7 @@ export default function ActivitiesTable() {
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((row) => {
                 return (
-                  <TableRow hover role="checkbox" tabIndex={-1} key={row.code}>
+                  <TableRow hover role="checkbox" tabIndex={-1} key={row.id}>
                     {columns.map((column, index) => {
                       const value = row[column.id];
                       return (

@@ -11,7 +11,10 @@ import ActivitiesTable from './components/ActivitiesTable';
 import BuyModal from './components/BuyModal';
 import SendModal from './components/SendModal';
 import { useDispatch, useSelector } from 'react-redux';
-import { getCoinBalance, getFiatBalance, accountSelector } from './accountSlice';
+import { getCoinBalance, getFiatBalance, accountSelector, clearState } from './accountSlice';
+import CircularProgress from '@mui/material/CircularProgress';
+import Backdrop from '@mui/material/Backdrop';
+import toast from 'react-hot-toast';
 
 function Home() {
   const navigate = useNavigate();
@@ -19,7 +22,7 @@ function Home() {
     localStorage.removeItem('token');
     navigate('/login');
   };
-  const { currency } = useSelector(
+  const { isFetching, isError, errorMessage, isSuccess, currency } = useSelector(
     accountSelector
   );
   const dispatch = useDispatch();
@@ -43,12 +46,28 @@ function Home() {
   React.useEffect(() => {
     dispatchBalance();
   }, [currency.name])
+
+  React.useEffect(() => {
+    if (isError) {
+      toast.error(errorMessage);
+      dispatch(clearState());
+    }
+    if (isSuccess) {
+      dispatch(clearState());
+    }
+  }, [isError, isSuccess]);
   
   return (
     <>
       <nav className="navbar">
         <Navbar onLogOut={onLogOut} />
       </nav>
+      <Backdrop
+        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={isFetching}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
       <React.Fragment>
         <Box className="copyboard_bar" sx={{textAlign: 'center'}}>
           <CopyToClipboardButton  />
@@ -67,6 +86,7 @@ function Home() {
         <SendModal 
           open={openSell} 
           onClose={handleCloseSell} 
+          onAfterSend={dispatchBalance}
         />
       </React.Fragment>
     </>

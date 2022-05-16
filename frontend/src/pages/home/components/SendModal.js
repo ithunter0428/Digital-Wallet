@@ -22,7 +22,7 @@ const style = {
   p: 4,
 };
 
-export default function SendModal({ open, onClose }) {
+export default function SendModal({ open, onClose, onAfterSend }) {
   const dispatch = useDispatch();
   const [receiver, setReceiver] = React.useState("");
   const [amount, setAmount] = React.useState(0);
@@ -33,7 +33,12 @@ export default function SendModal({ open, onClose }) {
     dispatch(sendCoin({
       currency: currency.name,
       amount: amount,
-      receiver: receiver
+      receiver: receiver,
+      success: () => {
+        onClose();
+        onAfterSend();
+      },
+      fallback: onClose
     }));
   }
   return (

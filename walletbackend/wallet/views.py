@@ -133,7 +133,11 @@ class CustomObtainAuthToken(ObtainAuthToken):
     def post(self, request):
         response = super(CustomObtainAuthToken, self).post(request)
         token = Token.objects.get(key=response.data['token'])
-        return Response({'token': token.key, 'email': token.user.email})
+        return Response({
+            'token': token.key, 
+            'email': token.user.email,
+            'username': token.user.username
+        })
 
 # user logout
 class LogoutViewSet(APIView):

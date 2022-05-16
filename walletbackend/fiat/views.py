@@ -21,6 +21,7 @@ from .serializers import UserBalanceSerializer, UserBalanceHistorySerializer
 from sentry_sdk import capture_exception
 import time
 import json
+import stripe
 
 def get_balance(userid, currency):
     try:
@@ -85,16 +86,24 @@ class TopUpFromStripe(APIView):
     def post(self, request):
         # currency
         # amount
-        # stripe_secret_key
+        # email
+        # payment_method_id
         
         try:
-            currency, stripe_secret_key, amount = request.data['currency'], request.data['stripe_secret_key'], request.data['amount']
+            currency, amount, email, payment_method_id = request.data['currency'], request.data['amount'], request.data['email'], request.data['payment_method_id']
             fee = amount * 0.015 + 0.3
 
             if amount < 5:
                 return Response('Amount must be over 5', status = status.HTTP_400_BAD_REQUEST, headers="")
             if amount > 500:
                 return Response('Amount must be less 500', status = status.HTTP_400_BAD_REQUEST, headers="")
+
+            customers = stripe.Customer.list(email=email).data
+            if len(customers) == 0:     # if the array is empty it means the email has not been used yet
+                customer = stripe.Customer.create(email=email, payment_method=payment_method_id, invoice_settings={'default_payment_method': payment_method_id})
+            else:
+                customer = customers[0]
+            stripe.PaymentIntent.create(customer=customer, payment_method=payment_method_id, currency=currency, amount=currency, confirm=True)
 
             balance = get_balance(request.user.id, currency)
 
