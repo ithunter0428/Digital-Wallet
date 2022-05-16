@@ -16,8 +16,9 @@ import Select, { SelectChangeEvent } from '@mui/material/Select';
 import { currencies } from '../currencies';
 import { useDispatch, useSelector } from 'react-redux';
 import { accountSelector, setCurrency } from '../pages/home/accountSlice';
+import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 
-function Navbar({ onLogOut }) {
+function Navbar({ onLogOut, onOpenChangeWallet, onCloseWallet }) {
     const [anchorEl, setAnchorEl] = React.useState(null);
     const open = Boolean(anchorEl);
     const dispatch = useDispatch();
@@ -36,12 +37,12 @@ function Navbar({ onLogOut }) {
     }
     return (
       <React.Fragment>
-        <Box sx={{ display: 'flex', alignItems: 'center', textAlign: 'center', justifyContent: 'space-between', padding: "20px 200px" }}>
-          <Typography sx={{ minWidth: 100, fontSize: "25px" }}>Wallet</Typography>
+        <Box className="navbarContainer">
+          <Typography className='logoTitle'>Wallet</Typography>
           {onLogOut && <Box sx={{ minWidth: 300, display: 'flex' }}>
             <Box sx={{ width: 120 }}>
               <FormControl fullWidth>
-                  <InputLabel id="demo-simple-select-label">Currency</InputLabel>
+                <InputLabel id="demo-simple-select-label">Currency</InputLabel>
                 <Select
                   labelId="demo-simple-select-label"
                   id="demo-simple-select"
@@ -65,7 +66,7 @@ function Navbar({ onLogOut }) {
                 aria-haspopup="true"
                 aria-expanded={open ? 'true' : undefined}
                 >
-                <Avatar sx={{ width: 32, height: 32 }}>M</Avatar>
+                <Avatar sx={{ width: 32, height: 32 }}>{(localStorage.getItem('username') || '').slice(0, 1)}</Avatar>
                 </IconButton>
             </Tooltip>
           </Box>}
@@ -105,10 +106,11 @@ function Navbar({ onLogOut }) {
           transformOrigin={{ horizontal: 'right', vertical: 'top' }}
           anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
         >
-          {/* <MenuItem>
-            <Avatar /> Profile
-          </MenuItem> */}
-          <MenuItem>
+          <MenuItem onClick={onOpenChangeWallet}>
+            <Avatar><AccountBalanceWalletIcon /></Avatar>
+             Change Wallet
+          </MenuItem>
+          <MenuItem onClick={onCloseWallet}>
             <Avatar /> Close Account
           </MenuItem>
           <Divider />

@@ -48,7 +48,7 @@ function Register() {
       <nav className="navbar">
         <Navbar/>
       </nav>
-      <Box sx={{ textAlign: 'center', marginTop: "60px" }}>
+      <Box sx={{ textAlign: 'center', marginTop: "20px" }}>
         <Typography component="h4" variant="h4" sx={{ fontWeight: 700 }}>Create Wallet Account</Typography>
         <Stack
           component="form"
@@ -147,6 +147,7 @@ function Register() {
               {...field}
             />}
           />  
+          <Typography component="h5" variant="h5" sx={{ fontWeight: 700 }}>Register Block.io Keys</Typography>
           <Controller
             name="litecoin"
             control={control}
@@ -187,7 +188,7 @@ function Register() {
             name="secret_pin"
             control={control}
             render={({ field }) => <TextField
-              label="Secret Pin"
+              label="Secret Pin(block.io)"
               defaultValue=""
               variant="standard"
               sx={{ width: "300px" }}

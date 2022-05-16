@@ -10,8 +10,9 @@ import ActionButtonGroup from './components/ActionButtonGroup';
 import ActivitiesTable from './components/ActivitiesTable';
 import BuyModal from './components/BuyModal';
 import SendModal from './components/SendModal';
+import ChangeWalletModal from './components/ChangeWalletModal';
 import { useDispatch, useSelector } from 'react-redux';
-import { getCoinBalance, getFiatBalance, accountSelector, clearState } from './accountSlice';
+import { getCoinBalance, getFiatBalance, accountSelector, clearState, closeWallet } from './accountSlice';
 import CircularProgress from '@mui/material/CircularProgress';
 import Backdrop from '@mui/material/Backdrop';
 import toast from 'react-hot-toast';
@@ -31,6 +32,10 @@ function Home() {
   const handleOpenBuy = () => setOpenBuy(true);
   const handleCloseBuy = () => setOpenBuy(false);
 
+  const [openChangeWallet, setOpenChangeWallet] = React.useState(false);
+  const handleOpenChangeWallet = () => setOpenChangeWallet(true);
+  const handleCloseChangeWallet = () => setOpenChangeWallet(false);
+
   const [openSell, setOpenSell] = React.useState(false);
   const handleOpenSell = () => setOpenSell(true);
   const handleCloseSell = () => setOpenSell(false);
@@ -43,8 +48,14 @@ function Home() {
     }
   }
 
+  const handleCloseWallet = () => {
+    dispatch(closeWallet({
+      success: onLogOut
+    }))
+  }
+
   React.useEffect(() => {
-    dispatchBalance();
+    if(currency.name) dispatchBalance();
   }, [currency.name])
 
   React.useEffect(() => {
@@ -60,7 +71,7 @@ function Home() {
   return (
     <>
       <nav className="navbar">
-        <Navbar onLogOut={onLogOut} />
+        <Navbar onLogOut={onLogOut} onOpenChangeWallet={handleOpenChangeWallet} onCloseWallet={handleCloseWallet} />
       </nav>
       <Backdrop
         sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
@@ -82,11 +93,16 @@ function Home() {
         <BuyModal 
           open={openBuy} 
           onClose={handleCloseBuy} 
+          onAfterSend={dispatchBalance}
         />
         <SendModal 
           open={openSell} 
           onClose={handleCloseSell} 
           onAfterSend={dispatchBalance}
+        />
+        <ChangeWalletModal 
+          open={openChangeWallet} 
+          onClose={handleCloseChangeWallet} 
         />
       </React.Fragment>
     </>

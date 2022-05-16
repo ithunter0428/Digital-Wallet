@@ -133,10 +133,18 @@ class CustomObtainAuthToken(ObtainAuthToken):
     def post(self, request):
         response = super(CustomObtainAuthToken, self).post(request)
         token = Token.objects.get(key=response.data['token'])
+        wallet = get_wallet(token.user.id)
+        wallet_name, closed = 'error', 0
+        if wallet == NULL:
+            closed = 1
+        else:
+            wallet_name = wallet.wallet_name
         return Response({
             'token': token.key, 
             'email': token.user.email,
-            'username': token.user.username
+            'username': token.user.username,
+            'wallet_name': wallet_name,
+            'wallet_closed': closed,
         })
 
 # user logout

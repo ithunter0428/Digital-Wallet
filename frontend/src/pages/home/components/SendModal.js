@@ -6,7 +6,7 @@ import Modal from '@mui/material/Modal';
 import InputAdornment from '@mui/material/InputAdornment';
 import TextField from '@mui/material/TextField';
 import { useSelector } from 'react-redux';
-import { accountSelector, sendCoin } from '../accountSlice';
+import { accountSelector, sendCoin, sendFiat } from '../accountSlice';
 import { useDispatch } from 'react-redux';
 
 const style = {
@@ -30,7 +30,8 @@ export default function SendModal({ open, onClose, onAfterSend }) {
     accountSelector
   );
   const handleSend = () => {
-    dispatch(sendCoin({
+    const func = currency.type == 'fiat'? sendFiat: sendCoin;
+    dispatch(func({
       currency: currency.name,
       amount: amount,
       receiver: receiver,

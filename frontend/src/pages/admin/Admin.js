@@ -3,10 +3,10 @@ import * as React from 'react';
 import './Admin.css';
 import { useNavigate } from "react-router-dom";
 import Navbar from '../../components/Navbar';
-import Box from '@mui/material/Box';
 import ActivitiesTable from './components/ActivitiesTable';
-import { useDispatch, useSelector } from 'react-redux';
-import { getPendingRows, accountSelector } from './accountSlice';
+import { useDispatch } from 'react-redux';
+import { getPendingRows } from './adminSlice';
+import toast from 'react-hot-toast';
 
 function Admin() {
   const navigate = useNavigate();
@@ -14,14 +14,11 @@ function Admin() {
     localStorage.removeItem('token');
     navigate('/login');
   };
-  const { currency } = useSelector(
-    accountSelector
-  );
   const dispatch = useDispatch();
 
   React.useEffect(() => {
-    dispatch(getPendingRows({currency: currency.name}));
-  }, [currency.name])
+    dispatch(getPendingRows({}));
+  }, []);
 
   return (
     <>

@@ -6,3 +6,16 @@
     background-color: yellow;
     margin-right: 10px;
 }
+
+.navbarContainer {
+    display: flex;
+    align-items: center; 
+    text-align: center;
+    justify-content: space-between;
+    padding: 20px 200px;
+}
+
+.logoTitle {
+    min-width: 100!important;
+    font-size: 25px!important;
+}

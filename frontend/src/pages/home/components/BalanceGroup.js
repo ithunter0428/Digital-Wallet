@@ -31,10 +31,10 @@ const BalanceGroupComponent = () => {
   return (
     <Grid container spacing={2}>
       <Grid item xs={6}>
-        <BalanceComponent title={"Available Balance"} value={(balance.available_balance || '').slice(0, 10)} />
+        <BalanceComponent title={"Available Balance"} value={balance.available_balance} />
       </Grid>
       <Grid item xs={6}>
-        <BalanceComponent title={currency.type == "coin"? "Pending": "Current Balance"} value={(balance.cur_balance || '').slice(0, 10)} current/>
+        <BalanceComponent title={currency.type == "coin"? "Pending Received Balance": "Current Balance"} value={balance.cur_balance} current/>
       </Grid>
     </Grid>
   );

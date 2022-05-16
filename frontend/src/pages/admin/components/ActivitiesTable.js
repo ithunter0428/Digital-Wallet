@@ -9,7 +9,9 @@ import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import Checkbox from '@mui/material/Checkbox';
 import { useSelector } from 'react-redux';
-import { accountSelector } from '../accountSlice';
+import { adminSelector, confirm, getPendingRows } from '../adminSlice';
+import { accountSelector } from '../../home/accountSlice';
+import { useDispatch } from 'react-redux';
 
 const columns = [
   { 
@@ -17,8 +19,8 @@ const columns = [
     label: 'Confirmed', 
     maxWidth: 120,
     align: 'left',
-    format: (value, tx, onConfirm) => (
-      <Checkbox checked={value} onClick={() => onConfirm(tx)}></Checkbox>
+    format: (value, id, onConfirm) => (
+      <Checkbox checked={value} onClick={() => onConfirm(id)}></Checkbox>
     )
   },
   {
@@ -46,6 +48,12 @@ const columns = [
     minWidth: 170,
     align: 'left',
     format: (value) => value.toLocaleString('en-US'),
+  },
+  {
+    id: 'currency',
+    label: 'Currency',
+    minWidth: 100,
+    align: 'left'
   },
   {
     id: 'amount',
@@ -79,21 +87,23 @@ function timeConverter(UNIX_timestamp){
 export default function ActivitiesTable() {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
-  const { currency, activities } = useSelector(
-    accountSelector
+  const { pendingRows } = useSelector(
+    adminSelector
   );
+  const { balance } = useSelector(accountSelector);
 
-  const rows = (activities || []).map(row => {
-    const direction = row.amounts_sent? "sent": "received";
-    const received = row.amounts_sent? row.amounts_sent[0]: row.amounts_received[0];
+  const rows = (pendingRows || []).map(row => {
+    const direction = row.sender == balance.address? "sent": "received";
     return {
-      confirmed: currency.type == "coin"? true: row.confirmed,
+      id: row.id,
+      confirmed: row.confirmed > 0,
       time: timeConverter(row.time),
-      sender: row.senders[0],
-      receiver: received.recipient,
-      amount: received.amount ,
+      sender: row.sender,
+      receiver: row.recipient,
+      amount: row.amount ,
       direction: direction,
-      fee: row.fee || 0
+      fee: row.fee.toFixed(6) || 0,
+      currency: row.currency
     }
   });
 
@@ -106,14 +116,21 @@ export default function ActivitiesTable() {
     setPage(0);
   };
 
-  const handleConfirm = (tx) => {
-    
+  const dispatch = useDispatch();
+
+  const handleConfirm = (id) => {
+    dispatch(confirm({ 
+      tx: id, 
+      callback: () => {
+        dispatch(getPendingRows({}));
+      }
+    }));
   }
 
   return (
-    <Paper sx={{ width: '90%', margin: "5%" }}>
-      <TableContainer sx={{ maxHeight: 440 }}>
-        <Table stickyHeader aria-label="sticky table">
+    <Paper sx={{ width: '95%', margin: "2%" }}>
+      <TableContainer>
+        <Table aria-label="sticky table">
           <TableHead>
             <TableRow>
               {columns.map((column) => (
@@ -132,13 +149,13 @@ export default function ActivitiesTable() {
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((row) => {
                 return (
-                  <TableRow hover role="checkbox" tabIndex={-1} key={row.code}>
+                  <TableRow hover role="checkbox" tabIndex={-1} key={row.id}>
                     {columns.map((column, index) => {
                       const value = row[column.id];
                       return (
                         <TableCell key={column.id} align={column.align}>
                           {(column.format && typeof value === 'number') || index == 0
-                            ? column.format(value, row.tx, handleConfirm)
+                            ? column.format(value, row.id, handleConfirm)
                             : value}
                         </TableCell>
                       );

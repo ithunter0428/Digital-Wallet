@@ -8,8 +8,3 @@ export const api = axios.create({
     'Authorization': `Token ` + localStorage.getItem("token")
   }
 });
-export default class ApiService{
-  static saveStripeInfo(data={}){
-    return api.post(`${API_URL}/wallet/fiat/topup`, data)
-  }
-}

@@ -14,15 +14,27 @@ export const loginUser = createAsyncThunk(
 
       let data = await response.data;
       if (response.status === 200) {
-        await localStorage.setItem('token', data.token);
-        // api.defaults.headers.common['Authorization'] = `Token ${data.token}` 
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('wallet_name', data.wallet_name);
+        if(data.wallet_closed != 0) {
+          return thunkAPI.rejectWithValue({message: 'This wallet is closed.'});
+        }
 
-        return { email };
+        api.interceptors.request.use(function (config) {
+          const token = localStorage.getItem('token');
+          config.headers.Authorization =  token ? `Token ${token}` : '';
+          return config;
+        });
+
+        // const res_ = await api.post('/wallet/fiat/get_stripe_key', {});
+        // data = await response.data;
+        // console.log(data)
+        return data;
       } else {
         return thunkAPI.rejectWithValue(data);
       }
     } catch (e) {
-      return thunkAPI.rejectWithValue({message: e.response.statusText});
+      return thunkAPI.rejectWithValue({message: JSON.stringify(e.response.data)});
     }
   }
 );
@@ -70,8 +82,7 @@ export const signupUser = createAsyncThunk(
       }
 
     } catch (e) {
-      console.log('Error', e.response.data);
-      return thunkAPI.rejectWithValue(e.response.data);
+      return thunkAPI.rejectWithValue({message: JSON.stringify(e.response.data)});
     }
   }
 );
@@ -107,10 +118,11 @@ export const authSlice = createSlice({
     [signupUser.rejected]: (state, { payload }) => {
       state.isFetching = false;
       state.isError = true;
-      state.errorMessage = JSON.stringify(payload);
+      state.errorMessage = payload.message;
     },
     [loginUser.fulfilled]: (state, { payload }) => {
-      state.username = payload.name;
+      state.username = payload.username;
+      localStorage.setItem("username", payload.username);
       state.isFetching = false;
       state.isSuccess = true;
       return state;
@@ -119,7 +131,7 @@ export const authSlice = createSlice({
       console.log('payload', payload);
       state.isFetching = false;
       state.isError = true;
-      state.errorMessage = payload? payload.message: "Error Connection";
+      state.errorMessage = payload.message;
     },
     [loginUser.pending]: (state) => {
       state.isFetching = true;

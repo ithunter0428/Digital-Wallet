@@ -18,9 +18,10 @@ const CopyToClipboardButton = () => {
 
   return (
     <Box onClick={handleClick}>
-      <Typography sx={{ minWidth: 100, fontSize: "25px" }}>Account</Typography>
+      <Typography sx={{ minWidth: 100, fontSize: "25px" }}>{localStorage.getItem('wallet_name')}</Typography>
       <Box>
-        <Typography sx={{ minWidth: 100, fontSize: "17px", opacity: 0.6 }}>{balance.address.slice(0, 10)}...
+        <Typography sx={{ minWidth: 100, fontSize: "17px", opacity: 0.6 }}>
+          {(balance.address || '').slice(0, 10)}...
           <IconButton color="primary">
             <ShareIcon />
           </IconButton>

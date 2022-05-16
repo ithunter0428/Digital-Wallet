@@ -2,49 +2,47 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { api } from '../../api';
 
 export const confirm = createAsyncThunk(
-  'account/confirm',
-  async ({ tx }, thunkAPI) => {
+  'admin/confirm',
+  async ({ tx, callback }, thunkAPI) => {
     try {
       const formData = new FormData();
-      formData.append("tx", tx);
+      formData.append("transaction", tx);
 
-      const response = await api.post('/wallet/confirm', formData);
-
+      const response = await api.post('/wallet/fiat/confirm_topup', formData);
       let data = await response.data;
       if (response.status === 200) {
-        return { ...data.data };
+        callback();
+        return { data: "success" };
       } else {
         return thunkAPI.rejectWithValue(data);
       }
     } catch (e) {
-      return thunkAPI.rejectWithValue({message: e.response.statusText});
+      return thunkAPI.rejectWithValue({message: JSON.stringify(e.response.data)});
     }
   }
 );
 
 export const getPendingRows = createAsyncThunk(
-  'account/pendingRows',
-  async ({ currency }, thunkAPI) => {
+  'admin/getPendingRows',
+  async ({ }, thunkAPI) => {
     try {
       const formData = new FormData();
-      formData.append("currency", currency);
+      const response = await api.post('/wallet/fiat/waiting_confirm', formData);
 
-      const response = await api.post('/wallet/pending', formData);
-
-      let data = await response.data;
+      const data = await response.data;
       if (response.status === 200) {
-        return data.data;
+        return { data: data.data};
       } else {
         return thunkAPI.rejectWithValue(data);
       }
     } catch (e) {
-      return thunkAPI.rejectWithValue({message: e.response.statusText});
+      return thunkAPI.rejectWithValue({message: JSON.stringify(e.response.data)});
     }
   }
 );
 
-export const accountSlice = createSlice({
-  name: 'account',
+export const adminSlice = createSlice({
+  name: 'admin',
   initialState: {
     isFetching: false,
     isSuccess: true,
@@ -65,7 +63,7 @@ export const accountSlice = createSlice({
     [confirm.rejected]: (state, { payload }) => {
       state.isFetching = false;
       state.isError = true;
-      state.errorMessage = JSON.stringify(payload);
+      state.errorMessage = payload.message;
     },
     [getPendingRows.fulfilled]: (state, { payload }) => {
       console.log('payload', payload);
@@ -77,13 +75,14 @@ export const accountSlice = createSlice({
       state.isFetching = true;
     },
     [getPendingRows.rejected]: (state, { payload }) => {
+      console.log('sdf')
       state.isFetching = false;
       state.isError = true;
-      state.errorMessage = JSON.stringify(payload);
+      state.errorMessage = payload.message;
     },
   },
 })
 
-export const { setCurrency } = accountSlice.actions;
+export const { } = adminSlice.actions;
 
-export const accountSelector = state => state.account
+export const adminSelector = state => state.admin

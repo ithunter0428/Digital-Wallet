@@ -96,6 +96,7 @@ class TopUpFromStripe(APIView):
         
         try:
             currency, amount, email, payment_method_id = request.data['currency'], request.data['amount'], request.data['email'], request.data['payment_method_id']
+            amount = float(amount)
             fee = amount * 0.015 + 0.3
 
             if amount < 5:
@@ -108,7 +109,7 @@ class TopUpFromStripe(APIView):
                 customer = stripe.Customer.create(email=email, payment_method=payment_method_id, invoice_settings={'default_payment_method': payment_method_id})
             else:
                 customer = customers[0]
-            stripe.PaymentIntent.create(customer=customer, payment_method=payment_method_id, currency=currency, amount=currency, confirm=True)
+            stripe.PaymentIntent.create(customer=customer, payment_method=payment_method_id, currency=currency, amount=int(amount*100), confirm=True)
 
             balance = get_balance(request.user.id, currency)
 
@@ -176,6 +177,7 @@ class TransferMoney(APIView):
         
         try:
             recipient, currency, amount = get_user_by_name(request.data['recipient']), request.data['currency'], request.data['amount']
+            amount = float(amount)
 
             if recipient == NULL:
                 return Response("Invalid recipient", status = status.HTTP_400_BAD_REQUEST, headers="")
